@@ -1,6 +1,7 @@
 // require necessary modules
 const inquirer = require('inquirer');
 
+// prompt the user with a start menu
 function startMenu() {
 
     inquirer.prompt([
@@ -32,32 +33,35 @@ function startMenu() {
 
 }
 
+// handle start menu response with one of the following functions
 function viewAllDepts() {
-    console.log("1");
+    // write some js that will display table of depts... use GET route
 };
 
 function viewAllRoles() {
-    console.log("2");
+    // write some js that will display table of roles... use GET route 
 };
 
 function viewAllEmployees() {
-    console.log("3");
+    // write some js that will display table of all employees... use GET route
 };
 
 function addDept() {
-    console.log("4");
+    // write some js that will allow the user to add a department to dept table... use POST route
 };
 
 function addRole() {
-    console.log("5");
+    // write some js that will allow user to add a role to the roles table... use POST route 
 };
 
 function addEmployee() {
-    console.log("6");
+    // write some js that will allow user to add an employee to the employees table... use POST route 
 };
 
 function updateEmployeeRole() {
-    console.log("7");
+    // write some js that will allow user to change an employees role... use PUT route
 };
 
+
+// call startMenu() to begin prompts
 startMenu();
