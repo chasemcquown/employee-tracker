@@ -1,6 +1,7 @@
 // require necessary modules
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -43,15 +44,27 @@ function startMenu() {
 
 // handle start menu response with one of the following functions
 function viewAllDepts() {
-    const sql = `SELECT * FROM departments`
+    const sql = `SELECT * FROM departments`;
+    db.query(sql, (err, rows) => {
+        console.table(rows);
+        startMenu();
+    }) 
 };
 
 function viewAllRoles() {
-    const sql = `SELECT * FROM roles`
+    const sql = `SELECT * FROM roles`;
+    db.query(sql, (err, rows) => {
+        console.table(rows);
+        startMenu();
+    })
 };
 
 function viewAllEmployees() {
-    const sql = `SELECT * FROM employees`
+    const sql = `SELECT * FROM employees`;
+    db.query(sql, (err, rows) => {
+        console.table(rows);
+        startMenu();
+    })
 };
 
 function addDept() {
@@ -93,7 +106,7 @@ function addRole() {
         }
     ]).then((input) => {
         const sql  = `INSERT INTO roles (title, salary, department_id)
-        VALUES (?)`;
+        VALUES (?,?,?)`;
         const params = [input.title, input.deptId, input.salary];
         db.query(sql, params, (err, result) => {
            if (err) {
@@ -128,9 +141,8 @@ function addEmployee() {
         }
     ]).then((input) => {
         const sql  = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
-        VALUES (?,?)`;
+        VALUES (?,?,?,?)`;
         const params = [input.employeeFirstName, input.employeeLastName, input.roleId, input.managerId];
-        console.log(params)
         db.query(sql, params, (err, result) => {
             if (err) {
                 return;
@@ -143,13 +155,18 @@ function addEmployee() {
 function updateEmployeeRole() {
     inquirer.prompt([
         {
+            name: "updatedEmployeeId",
+            type: "input",
+            message: "Please enter the id number of the employee you wish to update:"
+        },
+        {
             name: "updatedRoleId",
             type: "input",
-            message: "Please enter the id number of the role you wish to update:"
+            message: "Please enter the id number of the employee's new role:"
         }
     ]).then((input) => {
-        const sql = `SELECT * FROM roles WHERE id = ?`;
-        const params = [input.updatedRoleId];
+        const sql = `UPDATE employees SET role_id = ? WHERE id = ?`;
+        const params = [input.updatedEmployeeId, input.updatedRoleId];
         db.query(sql, params, (err, result) => {
             if (err) {
                 return;
