@@ -8,7 +8,7 @@ const db = mysql.createConnection(
       host: 'localhost',
       user: 'root',
       password: 'PeanutButterRottweiler&22',
-      database: 'inventory_db'
+      database: 'employeetracker'
     },
     console.log(`Connected to the employeetracker database.`)
 );
@@ -43,15 +43,15 @@ function startMenu() {
 
 // handle start menu response with one of the following functions
 function viewAllDepts() {
-    // write some js that will display table of depts... use GET route
+    const sql = `SELECT * FROM departments`
 };
 
 function viewAllRoles() {
-    // write some js that will display table of roles... use GET route 
+    const sql = `SELECT * FROM roles`
 };
 
 function viewAllEmployees() {
-    // write some js that will display table of all employees... use GET route
+    const sql = `SELECT * FROM employees`
 };
 
 function addDept() {
@@ -69,6 +69,7 @@ function addDept() {
             if (err) {
                 return;
             }
+            startMenu();
         })
     })
 };
@@ -76,18 +77,29 @@ function addDept() {
 function addRole() {
     inquirer.prompt([
         {
-            name: "roleName",
+            name: "title",
             type: "input",
             message: "Add a role:"
+        },
+        {
+            name: "deptId",
+            type: "input",
+            message: "Please enter the ID for the department that this role belongs to:"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "Please enter this role's salary"
         }
     ]).then((input) => {
-        const sql  = `INSERT INTO roles (title)
+        const sql  = `INSERT INTO roles (title, salary, department_id)
         VALUES (?)`;
-        const params = [input.roleName];
+        const params = [input.title, input.deptId, input.salary];
         db.query(sql, params, (err, result) => {
            if (err) {
                return;
            }
+           startMenu();
        })
     })
 };
@@ -103,21 +115,48 @@ function addEmployee() {
             name: "employeeLastName",
             type: "input",
             message: "Please enter the employee's last name:"
+        },
+        {
+            name: "roleId",
+            type: "input",
+            message: "Please enter the corresponding role ID for this employee:"
+        },
+        {
+            name: "managerId",
+            type: "input",
+            message: "Please enter the ID of this employee's manager:"
         }
     ]).then((input) => {
-        const sql  = `INSERT INTO employees (first_name, last_name)
+        const sql  = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
         VALUES (?,?)`;
-        const params = [input.employeeFirstName, inputemployeeLastName];
+        const params = [input.employeeFirstName, input.employeeLastName, input.roleId, input.managerId];
+        console.log(params)
         db.query(sql, params, (err, result) => {
             if (err) {
                 return;
             }
+            startMenu();
         })
     })
 };
 
 function updateEmployeeRole() {
-    // make the user enter the id of the employee that they wish to update
+    inquirer.prompt([
+        {
+            name: "updatedRoleId",
+            type: "input",
+            message: "Please enter the id number of the role you wish to update:"
+        }
+    ]).then((input) => {
+        const sql = `SELECT * FROM roles WHERE id = ?`;
+        const params = [input.updatedRoleId];
+        db.query(sql, params, (err, result) => {
+            if (err) {
+                return;
+            }
+            startMenu();
+        })
+    })
 };
 
 
