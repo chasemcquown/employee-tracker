@@ -2,6 +2,17 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
+// Connect to database
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      user: 'root',
+      password: 'PeanutButterRottweiler&22',
+      database: 'inventory_db'
+    },
+    console.log(`Connected to the employeetracker database.`)
+);
+
 // prompt the user with a start menu
 function startMenu() {
     inquirer.prompt([
@@ -51,7 +62,14 @@ function addDept() {
             message: "Add a department:"
         }
     ]).then((input) => {
-        // call a function that will add dept name to dept table
+        const sql  = `INSERT INTO departments (name)
+        VALUES (?)`;
+        const params = [input.deptName];
+        db.query(sql, params, (err, result) => {
+            if (err) {
+                return;
+            }
+        })
     })
 };
 
@@ -63,19 +81,38 @@ function addRole() {
             message: "Add a role:"
         }
     ]).then((input) => {
-        // call a function that will add the role to the roles table
+        const sql  = `INSERT INTO roles (title)
+        VALUES (?)`;
+        const params = [input.roleName];
+        db.query(sql, params, (err, result) => {
+           if (err) {
+               return;
+           }
+       })
     })
 };
 
 function addEmployee() {
     inquirer.prompt([
         {
-            name: "employeeName",
+            name: "employeeFirstName",
             type: "input",
-            message: "Add an employee's name:"
+            message: "Add an employee's first name:"
+        },
+        {
+            name: "employeeLastName",
+            type: "input",
+            message: "Please enter the employee's last name:"
         }
     ]).then((input) => {
-        // call a function that will add the employee to the employees table
+        const sql  = `INSERT INTO employees (first_name, last_name)
+        VALUES (?,?)`;
+        const params = [input.employeeFirstName, inputemployeeLastName];
+        db.query(sql, params, (err, result) => {
+            if (err) {
+                return;
+            }
+        })
     })
 };
 
