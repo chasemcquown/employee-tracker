@@ -3,6 +3,8 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+
+
 // Connect to database
 const db = mysql.createConnection(
     {
@@ -52,7 +54,11 @@ function viewAllDepts() {
 };
 
 function viewAllRoles() {
-    const sql = `SELECT * FROM roles`;
+    const sql = `SELECT roles.*, departments.name
+                 AS department_title
+                 FROM roles
+                 LEFT JOIN departments
+                 ON roles.department_id = departments.id`;
     db.query(sql, (err, rows) => {
         console.table(rows);
         startMenu();
@@ -60,7 +66,11 @@ function viewAllRoles() {
 };
 
 function viewAllEmployees() {
-    const sql = `SELECT * FROM employees`;
+    const sql = `SELECT employees.*, roles.title
+                 AS employee_title
+                 FROM employees
+                 LEFT JOIN roles
+                 ON employees.role_id = roles.id`;
     db.query(sql, (err, rows) => {
         console.table(rows);
         startMenu();
@@ -107,7 +117,7 @@ function addRole() {
     ]).then((input) => {
         const sql  = `INSERT INTO roles (title, salary, department_id)
         VALUES (?,?,?)`;
-        const params = [input.title, input.deptId, input.salary];
+        const params = [input.title, input.salary, input.deptId];
         db.query(sql, params, (err, result) => {
            if (err) {
                return;
@@ -166,7 +176,7 @@ function updateEmployeeRole() {
         }
     ]).then((input) => {
         const sql = `UPDATE employees SET role_id = ? WHERE id = ?`;
-        const params = [input.updatedEmployeeId, input.updatedRoleId];
+        const params = [input.updatedRoleId, input.updatedEmployeeId];
         db.query(sql, params, (err, result) => {
             if (err) {
                 return;
